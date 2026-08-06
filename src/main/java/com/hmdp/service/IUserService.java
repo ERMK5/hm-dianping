@@ -21,9 +21,8 @@ public interface IUserService extends IService<User> {
      * 发送短信验证码并保存验证码
      * @param phone
      * @param session
-     * @return
      */
-    Result sendCode(String phone, HttpSession session);
+    void sendCode(String phone, HttpSession session);
 
     /**
      * 登录功能
@@ -31,5 +30,5 @@ public interface IUserService extends IService<User> {
      * @param session
      * @return
      */
-    Result login(LoginFormDTO loginForm, HttpSession session);
+    String login(LoginFormDTO loginForm, HttpSession session);
 }

@@ -2,6 +2,7 @@ package com.hmdp.utils;
 
 
 import cn.hutool.core.util.RandomUtil;
+import com.hmdp.exception.BizException;
 import org.springframework.util.DigestUtils;
 
 import java.nio.charset.StandardCharsets;
@@ -23,7 +24,7 @@ public class PasswordEncoder {
             return false;
         }
         if(!encodedPassword.contains("@")){
-            throw new RuntimeException("密码格式不正确！");
+            throw new BizException("密码格式不正确！");
         }
         String[] arr = encodedPassword.split("@");
         // 获取盐

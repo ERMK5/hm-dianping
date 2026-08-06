@@ -9,9 +9,9 @@ import com.hmdp.dto.LoginFormDTO;
 import com.hmdp.dto.Result;
 import com.hmdp.dto.UserDTO;
 import com.hmdp.entity.User;
+import com.hmdp.exception.BizException;
 import com.hmdp.mapper.UserMapper;
 import com.hmdp.service.IUserService;
-import com.hmdp.utils.RedisConstants;
 import com.hmdp.utils.RegexUtils;
 import com.hmdp.utils.SystemConstants;
 import lombok.extern.slf4j.Slf4j;
@@ -46,14 +46,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      *
      * @param phone
      * @param session
-     * @return
      */
     @Override
-    public Result sendCode(String phone, HttpSession session) {
+    public void sendCode(String phone, HttpSession session) {
         //1.校验手机号
         if (RegexUtils.isPhoneInvalid(phone)) {
-            //2.如果不符合，返回错误信息
-            return Result.fail("手机号格式错误！");
+            //2.如果不符合，抛出错误信息
+            throw new BizException("手机号格式错误！");
         }
         //3.符合，则生成验证码
         String code = RandomUtil.randomNumbers(6);
@@ -62,8 +61,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         session.setAttribute("code", code);
         //5.发送验证码
         log.debug("发送短信验证码成功，验证码：{}", code);
-        //返回ok
-        return Result.ok();
     }
 
     /**
@@ -74,19 +71,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return
      */
     @Override
-    public Result login(LoginFormDTO loginForm, HttpSession session) {
+    public String login(LoginFormDTO loginForm, HttpSession session) {
         //1.校验手机号
         String phone = loginForm.getPhone();
         if (RegexUtils.isPhoneInvalid(phone)) {
-            //2.如果不符合，返回错误信息
-            return Result.fail("手机号格式错误！");
+            //2.如果不符合，抛出错误信息
+            throw new BizException("手机号格式错误！");
         }
         //2.从Redis获取并校验验证码
         String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + phone);
         String code = loginForm.getCode();//前端提交来的验证码
         if (code == null || !code.equals(cacheCode)) {
-            //3.不一致，返回错误信息
-            return Result.fail("验证码错误");
+            //3.不一致，抛出错误信息
+            throw new BizException("验证码错误");
         }
 
         //4.一致，根据手机号查询用户是否存在
@@ -111,7 +108,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         //设置token有效期
         stringRedisTemplate.expire(tokenKey, LOGIN_USER_TTL, TimeUnit.MINUTES);
         //7.返回token
-        return Result.ok(token);
+        return token;
     }
 
     private User createUserWithPhone(String phone) {
@@ -122,7 +119,5 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         //保存用户
         save(user);
         return user;
-
-
     }
 }
