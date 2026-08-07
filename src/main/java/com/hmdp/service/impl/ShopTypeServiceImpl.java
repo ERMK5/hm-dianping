@@ -1,7 +1,5 @@
 package com.hmdp.service.impl;
 
-import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.hmdp.entity.ShopType;
 import com.hmdp.mapper.ShopTypeMapper;
@@ -13,6 +11,8 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.hmdp.utils.RedisConstants.CACHE_SHOP_TYPE_KEY;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ public class ShopTypeServiceImpl extends ServiceImpl<ShopTypeMapper, ShopType> i
 
     @Override
     public List<ShopType> listShopType() {
-        String key = "cache:shopType";
+        String key = CACHE_SHOP_TYPE_KEY;
         // 在Redis中查询所有店铺类型
         List<String> shopTypeList = stringRedisTemplate.opsForList().range(key, 0, -1);
         // 判断Redis中是否有数据
