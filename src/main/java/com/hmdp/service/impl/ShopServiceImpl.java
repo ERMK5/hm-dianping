@@ -158,7 +158,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
         } finally {
             // 必须判断锁不为null再释放，防止lockKey为null执行unlock报错
             if (lockKey != null) {
-                unlock(lockKey);
+                unLock(lockKey);
             }
         }
         return shop;
@@ -218,7 +218,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
                     log.error("商铺{}缓存重建失败", id, e);
                 } finally {
                     // 释放锁
-                    unlock(lockKey);
+                    unLock(lockKey);
                 }
             });
         }
@@ -280,7 +280,7 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
      *
      * @param key
      */
-    /*private void unlock(String key) {
+    /*private void unLock(String key) {
         stringRedisTemplate.delete(key);
     }*/
 

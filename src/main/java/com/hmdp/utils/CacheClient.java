@@ -101,7 +101,7 @@ public class CacheClient {
     private static final ExecutorService CACHE_REBUILD_EXECUTOR = Executors.newFixedThreadPool(10);
 
     /**
-     *
+     *  逻辑过期解决缓存击穿
      * @param
      * @return
      */
@@ -125,7 +125,7 @@ public class CacheClient {
             return r;
         }
         // 情况3：逻辑过期，需要缓存重建
-        // 抢锁
+        // 获取锁
         String lockKey = lockKeyPrefix + id;
         boolean isLock = tryLock(lockKey);
 

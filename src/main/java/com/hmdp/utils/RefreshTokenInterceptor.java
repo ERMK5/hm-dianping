@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 // token刷新拦截器，拦截所有请求
 /*
 有合法 token：读取用户存入 ThreadLocal、刷新 Redis 有效期；
-没有 token /token 失效：什么都不做，直接放行。
+没有 token /token 失效：什么都不做，直接放行，交给后面的登录拦截器
 */
 public class RefreshTokenInterceptor implements HandlerInterceptor {
     private StringRedisTemplate stringRedisTemplate;
