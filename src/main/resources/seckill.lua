@@ -1,5 +1,9 @@
+-- 优惠券id
 local voucherId = ARGV[1]
+-- 用户id
 local userId = ARGV[2]
+-- 订单id
+local orderId = ARGV[3]
 
 -- String 字符串 秒杀券剩余库存，存数字
 local stockKey = 'seckill:stock:' .. voucherId
@@ -21,4 +25,6 @@ end
 redis.call('incrby', stockKey, -1)
 -- 下单s add
 redis.call('sadd', orderKey, userId)
+-- 发送消息到队列
+redis.call('xadd','stream.orders','*','userId',userId,'voucherId',voucherId,'id',orderId)
 return 0

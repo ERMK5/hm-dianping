@@ -109,9 +109,9 @@ public class CacheClient {
         String key = keyPrefix + id;
         // 从Redis查询店铺缓存
         String json = stringRedisTemplate.opsForValue().get(key);
-        // 情况1：缓存未命中，返回异常（逻辑上不会出现这种情况）
+        // 情况1：缓存未命中，返回异常（逻辑上不会出现这种情况，出现可能是没有缓存预热）
         if (StrUtil.isBlank(json)) {
-            throw new BizException("服务异常");
+            throw new BizException("服务异常，逻辑过期没有缓存预热expireTime");
         }
 
         // 缓存命中，将缓存里的JSON反序列化为对象

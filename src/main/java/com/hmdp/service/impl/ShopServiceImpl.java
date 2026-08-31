@@ -177,9 +177,9 @@ public class ShopServiceImpl extends ServiceImpl<ShopMapper, Shop> implements IS
         String key = CACHE_SHOP_KEY + id;
         // 从Redis查询店铺缓存
         String shopJson = stringRedisTemplate.opsForValue().get(key);
-        // 情况1：缓存未命中，返回异常（逻辑上不会出现这种情况）
+        // 情况1：缓存未命中，返回异常（逻辑上不会出现这种情况，出现可能是没有缓存预热）
         if (StrUtil.isBlank(shopJson)) {
-            throw new BizException("服务异常");
+            throw new BizException("服务异常，逻辑过期没有缓存预热expireTime");
         }
 
         // 缓存命中，将缓存里的JSON反序列化为对象
