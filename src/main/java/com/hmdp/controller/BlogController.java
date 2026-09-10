@@ -3,11 +3,13 @@ package com.hmdp.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.hmdp.dto.Result;
+import com.hmdp.dto.ScrollResult;
 import com.hmdp.dto.UserDTO;
 import com.hmdp.entity.Blog;
 import com.hmdp.service.IBlogService;
 import com.hmdp.utils.SystemConstants;
 import com.hmdp.utils.UserHolder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,6 +23,7 @@ import java.util.List;
  * @author 虎哥
  * @since 2021-12-22
  */
+@Slf4j
 @RestController
 @RequestMapping("/blog")
 public class BlogController {
@@ -31,13 +34,8 @@ public class BlogController {
 
     @PostMapping
     public Result saveBlog(@RequestBody Blog blog) {
-        // 获取登录用户
-        UserDTO user = UserHolder.getUser();
-        blog.setUserId(user.getId());
-        // 保存探店博文
-        blogService.save(blog);
-        // 返回id
-        return Result.ok(blog.getId());
+        Long blogId = blogService.saveBlog(blog);
+        return Result.ok(blogId);
     }
 
     @PutMapping("/like/{id}")
@@ -86,6 +84,20 @@ public class BlogController {
         // 获取当前页数据
         List<Blog> records = page.getRecords();
         return Result.ok(records);
+    }
+
+    /**
+     * 查询关注博主的笔记，滚动分页
+     *
+     * @param max
+     * @param offset
+     * @return
+     */
+    @GetMapping("/of/follow")
+    public Result queryBlogOfFollow(@RequestParam("lastId") Long max, @RequestParam(defaultValue = "0") Integer offset) {
+        log.info("查询关注博主的笔记，滚动分页");
+        ScrollResult scroll = blogService.queryBlogFollow(max, offset);
+        return Result.ok(scroll);
     }
 
 }
