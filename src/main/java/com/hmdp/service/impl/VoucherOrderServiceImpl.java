@@ -110,7 +110,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
                 // 创建消费者组，如果组已存在则忽略错误
                 stringRedisTemplate.opsForStream().createGroup(queueName, "g1");
             } catch (Exception e) {
-                log.warn("消费者组 g1 已存在，跳过创建");
+                log.info("消费者组 g1 已存在，跳过创建");
             }
             while (true) {
                 try {
@@ -134,7 +134,7 @@ public class VoucherOrderServiceImpl extends ServiceImpl<VoucherOrderMapper, Vou
                     // ACK确认 SACK stream.orders g1 id
                     stringRedisTemplate.opsForStream().acknowledge(queueName,"g1",record.getId());
                 } catch (Exception e) {
-                    log.error("处理订单异常", e);
+                    log.error("处理订单异常情况", e);
                     handlePendingList();// 异常情况下读取pending-list逻辑
                 }
             }
