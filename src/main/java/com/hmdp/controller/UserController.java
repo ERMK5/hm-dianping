@@ -108,4 +108,15 @@ public class UserController {
         return Result.ok(userDTO);
     }
 
+    /**
+     * 用户签到
+     *
+     * @return
+     */
+    @PostMapping("/sign")
+    public Result sign() {
+        userService.sign();
+        return Result.ok();
+    }
+
 }

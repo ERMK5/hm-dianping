@@ -31,4 +31,9 @@ public interface IUserService extends IService<User> {
      * @return
      */
     String login(LoginFormDTO loginForm, HttpSession session);
+
+    /**
+     * 用户签到
+     */
+    void sign();
 }
